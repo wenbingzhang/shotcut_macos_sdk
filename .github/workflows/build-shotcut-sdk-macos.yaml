@@ -1,0 +1,17 @@
+name: build-shotcut-sdk-macos
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest-large
+
+    steps:
+      - name: Build
+        run: |
+          pip3 install meson
+          git clone https://github.com/mltframework/shotcut.git
+          cd shotcut
+          ./scripts/build-shotcut.sh
+          echo Done
