@@ -5,13 +5,21 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest-large
+    runs-on: macos-latest
 
     steps:
+      - uses: actions/checkout@v3.5.2
       - name: Build
         run: |
-          pip3 install meson
-          git clone https://github.com/mltframework/shotcut.git
-          cd shotcut
-          ./scripts/build-shotcut.sh
+          export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+          brew update && brew upgrade giflib
+          brew install cmake pkg-config m4 autoconf automake colima meson ninja libtool fftw ffmpeg@6 libomp qt eigen libepoxy python@3.12 jack potrace
+          mkdir -p ${HOME}/shotcut/src
+          ln -s /usr/local/bin/glibtoolize /usr/local/bin/libtoolize
+          sh ./build-shotcut_macos_x86_64.sh -s
           echo Done
+      - name: Upload Asset
+        uses: actions/upload-artifact@v2
+        with:
+          name: shotcut.txz
+          path: ${{env.HOME}}/shotcut.txz
